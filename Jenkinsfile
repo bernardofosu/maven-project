@@ -115,9 +115,4 @@ pipeline {
             }
         }
     }
-    post {
-        success {
-            archiveArtifacts artifacts: '**/target/*.war'  // Ensures artifacts from the previous build are archived
-        }
-    }
 }
