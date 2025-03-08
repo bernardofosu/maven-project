@@ -1,5 +1,5 @@
 pipeline {
-    agent none  // No default agent; each stage defines its own agent
+    agent any  // No default agent; each stage defines its own agent if use none here
     parameters {
         string defaultValue: 'ofosu', name: 'LASTNAME'
     }
