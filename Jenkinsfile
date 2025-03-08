@@ -15,6 +15,7 @@ pipeline {
                 sh "mvn clean package"
                 echo "Hello $NAME ${params.LASTNAME}"
             }
+        }
         stage("Testing") {
             parallel {
                 stage("Test A") {
