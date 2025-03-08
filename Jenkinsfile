@@ -1,5 +1,8 @@
 pipeline {
     agent any  // No default agent; each stage defines its own agent if use none here
+    tools {
+        maven 'mymaven'
+    }
     parameters {
         string defaultValue: 'ofosu', name: 'LASTNAME'
     }
@@ -7,6 +10,11 @@ pipeline {
         NAME = "kwasi"
     }
     stages {
+        stage("build") {
+            steps {
+                sh "mvn clean package"
+                echo "Hello $NAME ${params.LASTNAME}"
+            }
         stage("Testing") {
             parallel {
                 stage("Test A") {
@@ -28,11 +36,12 @@ pipeline {
                     }
                 }
             }
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/target/*.war'
+                }
+            }
+
         }
-    }
-    post {
-        success {
-            archiveArtifacts artifacts: '**/target/*.war'
-        }
-    }
+    }   
 }
