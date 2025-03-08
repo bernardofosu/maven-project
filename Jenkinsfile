@@ -30,10 +30,10 @@ pipeline {
 }
 */
 
-// Parallel stages pipeline
+// Multi stage Parallel pipeline exexuting maven build and archiving the war file
 pipeline {
     agent {
-        label 'agent-2'
+        label 'agent-2'  // Default agent for all stages unless overridden
     }
     tools {
         maven 'mymaven'
@@ -43,38 +43,40 @@ pipeline {
     }
     environment {
         NAME = "kwasi"
-   }
+    }
     stages {
         stage("build") {
             steps {
-                  sh "mvn clean package"
-                  echo "Hello $NAME ${params.LASTNAME}"
+                sh "mvn clean package"
+                echo "Hello $NAME ${params.LASTNAME}"
             }
         }
-        stage("deploy") {
+        stage("testing") {
             parallel {
-                stage("deploy-to-dev") {
+                stage("Test A") {
                     agent {
-                        label 'agent-1'
+                        label 'agent-1'  // Runs Test A on agent-1
                     }
                     steps {
-                        echo "Deploying to dev"
+                        echo "Running Test A"
+                        sh "echo 'Executing Test A commands...'"
                     }
                 }
-                stage("deploy-to-prod") {
+                stage("Test B") {
                     agent {
-                        label 'agent-2'
+                        label 'agent-2'  // Runs Test B on agent-2
                     }
                     steps {
-                        echo "Deploying to prod"
+                        echo "Running Test B"
+                        sh "echo 'Executing Test B commands...'"
                     }
                 }
             }
-            post {
-                success {
-                  archiveArtifacts artifacts: '**/target/*.war'
-                }
-            }
+        }
+    }
+    post {
+        success {
+            archiveArtifacts artifacts: '**/target/*.war'
         }
     }
 }
