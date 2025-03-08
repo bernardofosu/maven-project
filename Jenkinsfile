@@ -22,7 +22,7 @@ pipeline {
             }
             post {
                 success {
-                  archiveArtifacts artifacts: '**/target/*.war'
+                  // archiveArtifacts artifacts: '**/target/*.war'
                 }
             }
         }
@@ -30,6 +30,7 @@ pipeline {
 }
 */
 
+/*
 // Multi stage Parallel pipeline exexuting maven build and archiving the war file
 pipeline {
     agent {
@@ -77,6 +78,46 @@ pipeline {
     post {
         success {
             archiveArtifacts artifacts: '**/target/*.war'
+        }
+    }
+}
+*/
+
+pipeline {
+    agent none  // No default agent; each stage defines its own agent
+    parameters {
+        string defaultValue: 'ofosu', name: 'LASTNAME'
+    }
+    environment {
+        NAME = "kwasi"
+    }
+    stages {
+        stage("Testing") {
+            parallel {
+                stage("Test A") {
+                    agent {
+                        label 'agent-1'  // Runs on agent-1
+                    }
+                    steps {
+                        echo "Running Test A"
+                        sh "echo 'Executing Test A commands...'"
+                    }
+                }
+                stage("Test B") {
+                    agent {
+                        label 'agent-2'  // Runs on agent-2
+                    }
+                    steps {
+                        echo "Running Test B"
+                        sh "echo 'Executing Test B commands...'"
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            archiveArtifacts artifacts: '**/target/*.war'  // Ensures artifacts from the previous build are archived
         }
     }
 }
