@@ -32,13 +32,7 @@ pipeline {
     }
     post {
         success {
-            script {
-                if (fileExists('target')) {
-                    archiveArtifacts artifacts: 'target/*.war'
-                } else {
-                    echo "Skipping artifact archiving: 'target' directory not found."
-                }
-            }
+            archiveArtifacts artifacts: '**/target/*.war'
         }
     }
 }
